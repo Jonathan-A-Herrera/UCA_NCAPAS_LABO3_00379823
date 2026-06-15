@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Lab 3 - Pirates API con DTOs y Paginación",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear pirata",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"name\": \"Monkey D. Luffy\",\n  \"bounty\": 3000000000.0,\n  \"crew\": \"Sombrero de Paja\",\n  \"isAlive\": true\n}"},
+        "url": {"raw": "http://localhost:8080/api/pirates", "host": ["localhost"], "port": "8080", "path": ["api","pirates"]}
+      }
+    },
+    {
+      "name": "Crear pirata - validación error",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"bounty\": 3000000000.0,\n  \"crew\": \"Sombrero de Paja\",\n  \"isAlive\": true\n}"},
+        "url": {"raw": "http://localhost:8080/api/pirates", "host": ["localhost"], "port": "8080", "path": ["api","pirates"]}
+      }
+    },
+    {
+      "name": "Obtener todos paginado",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:8080/api/pirates?page=0&size=10", "host": ["localhost"], "port": "8080", "path": ["api","pirates"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}
+      }
+    },
+    {
+      "name": "Obtener por ID",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:8080/api/pirates/:id", "host": ["localhost"], "port": "8080", "path": ["api","pirates",":id"], "variable": [{"key": "id", "value": ""}]}
+      }
+    },
+    {
+      "name": "Actualizar pirata",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {"mode": "raw", "raw": "{\n  \"name\": \"Roronoa Zoro\",\n  \"bounty\": 1500000000.0,\n  \"crew\": \"Sombrero de Paja\",\n  \"isAlive\": true\n}"},
+        "url": {"raw": "http://localhost:8080/api/pirates/:id", "host": ["localhost"], "port": "8080", "path": ["api","pirates",":id"], "variable": [{"key": "id", "value": ""}]}
+      }
+    },
+    {
+      "name": "Eliminar pirata",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:8080/api/pirates/:id", "host": ["localhost"], "port": "8080", "path": ["api","pirates",":id"], "variable": [{"key": "id", "value": ""}]}
+      }
+    }
+  ]
+}
