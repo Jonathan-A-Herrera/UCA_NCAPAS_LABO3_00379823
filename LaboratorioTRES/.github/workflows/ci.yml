@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run unit tests with Mockito
+        run: ./mvnw clean test
+
+      - name: Build application
+        run: ./mvnw clean package -DskipTests
+
+  smoke-test:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file for docker-compose
+        run: |
+          cat > .env << EOF
+          POSTGRES_DB=pirates_db
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=postgres
+          DB_URL=jdbc:postgresql://db:5432/pirates_db
+          DB_USERNAME=postgres
+          DB_PASSWORD=postgres
+          EOF
+
+      - name: Build and start containers
+        run: docker compose up --build -d
+
+      - name: Wait for app to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:8080/api/pirates; then
+              echo "App is up!"
+              exit 0
+            fi
+            echo "Waiting for app..."
+            sleep 3
+          done
+          echo "App did not start in time"
+          docker compose logs
+          exit 1
+
+      - name: Smoke test - curl pirates endpoint
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/pirates)
+          if [ "$response" -ne 200 ]; then
+            echo "Smoke test failed with status $response"
+            exit 1
+          fi
+          echo "Smoke test passed with status $response"
+
+      - name: Tear down containers
+        if: always()
+        run: docker compose down -v
