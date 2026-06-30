@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+echo ".env" >> /Users/jonathanherreras/Downloads/UCA_NCAPAS_LABO3_00379823/LaboratorioTRES/.gitignore
